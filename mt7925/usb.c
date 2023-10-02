@@ -34,7 +34,7 @@ mt7925u_mcu_send_message(struct mt76_dev *mdev, struct sk_buff *skb,
 	else
 		ep = MT_EP_OUT_AC_BE;
 
-	mt7925_skb_add_usb_sdio_hdr(dev, skb, 0);
+	mt792x_skb_add_usb_sdio_hdr(dev, skb, 0);
 	pad = round_up(skb->len, 4) + 4 - skb->len;
 	__skb_put_zero(skb, pad);
 
@@ -67,14 +67,6 @@ static int mt7925u_mcu_init(struct mt792x_dev *dev)
 	mt76_clear(dev, MT_UDMA_TX_QSEL, MT_FW_DL_EN);
 
 	return 0;
-}
-
-static void mt7925u_stop(struct ieee80211_hw *hw)
-{
-	struct mt792x_dev *dev = mt792x_hw_dev(hw);
-
-	mt76u_stop_tx(&dev->mt76);
-	mt7925_stop(hw);
 }
 
 static int mt7925u_mac_reset(struct mt792x_dev *dev)
@@ -180,7 +172,7 @@ static int mt7925u_probe(struct usb_interface *usb_intf,
 	if (!ops)
 		return -ENOMEM;
 
-	ops->stop = mt7925u_stop;
+	ops->stop = mt792xu_stop;
 
 	mdev = mt76_alloc_device(&usb_intf->dev, sizeof(*dev), ops, &drv_ops);
 	if (!mdev)
